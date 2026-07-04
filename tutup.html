@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akses Ditutup Sementara - Portal Digital DPIB & TKP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+  <!-- Layer Latar Belakang Garis Teknik -->
+  <div class="background-overlay absolute inset-0 -z-10"></div>
+
+  <!-- Header: Opsi B (Abu-abu Baja Industri) -->
+  <header class="w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200/95 border-b-4 border-b-blue-600 border-t border-slate-300/80 shadow-md sticky top-0 z-40">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold">
+        <i class="fa-solid fa-arrow-left"></i> Beranda Portal
+      </a>
+      <div class="text-right flex flex-col items-end">
+        <div class="flex items-center gap-2">
+          <img src="logosmk.png" alt="Logo" class="h-8 w-8 object-contain" onerror="this.src='https://placehold.co/100x100?text=SMK'">
+          <span class="text-xs font-bold text-slate-700 tracking-wider">PORTAL DPIB & TKP</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN UTAMA: Estetika Studio Arsitektur Minimalis -->
+  <main class="flex-grow w-full max-w-[90vw] md:max-w-2xl mx-auto px-4 py-12 flex flex-col justify-center items-center">
+    <div class="w-full bg-white rounded-2xl p-8 md:p-12 border border-slate-200/60 shadow-sm text-center space-y-6">
+      
+      <!-- Lingkaran Desain Halus -->
+      <div class="w-16 h-16 bg-blue-50 border border-blue-100 rounded-full flex items-center justify-center text-blue-600 mx-auto text-2xl shadow-sm">
+        <i class="fa-solid fa-gear fa-spin-pulse fa-2xl fa-width-auto"></i>
+      </div>
+      
+      <!-- Teks Informasi Bersahabat -->
+      <div class="space-y-3">
+        <span class="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-[10px] font-bold tracking-wider uppercase">
+          Pemeliharaan Sistem
+        </span>
+        <h2 class="text-lg md:text-xl font-bold text-slate-800 uppercase tracking-wide">
+          Sistem Sedang Diperbarui
+        </h2>
+        <p class="text-xs md:text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
+          Kami sedang melakukan pembaruan data berkala dan pemeliharaan server untuk meningkatkan kenyamanan presensi Anda. Kami akan segera kembali.
+        </p>
+      </div>
+
+      <div class="h-px bg-slate-200 w-16 mx-auto"></div>
+
+      <!-- Keterangan Tambahan Lembut -->
+      <p class="text-[11px] text-slate-400 italic">
+        Silakan berkoordinasi dengan Guru Pembimbing masing-masing untuk pelaporan presensi manual hari ini.
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer: Opsi B (Abu-abu Baja Industri) -->
+  <footer class="w-full bg-gradient-to-t from-slate-200 to-slate-100 border-t-2 border-slate-300 py-4 shadow-inner">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] mx-auto px-4 flex justify-between items-center text-[10px] sm:text-xs">
+      <p class="text-slate-600 font-bold">
+        © 2026 DPIB & TKP | SMKN2TB - All Rights Reserved.
+      </p>
+      <!-- Tautan Tersembunyi untuk Guru/Admin -->
+      <a href="absensipkl.html?admin=true" class="text-slate-500 hover:text-blue-600 font-bold transition-colors flex items-center gap-1.5">
+        <i class="fa-solid fa-user-tie"></i> Panel Pembimbing
+      </a>
+    </div>
+  </footer>
+
+</body>
+</html>

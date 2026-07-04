@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi PKL - XII DPIB & TKP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+  
+ <!-- LAYAR BLOKIR KHUSUS NON-PWA DI HALAMAN ABSEN -->
+  <div id="pwa-blocker" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[200] flex flex-col justify-center items-center p-6 text-center">
+    <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl border border-slate-100 space-y-4">
+      <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto shadow-sm animate-bounce">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-sm font-black text-slate-800 uppercase tracking-wide">Aplikasi Wajib Diinstal</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">Sistem mendeteksi Anda membuka halaman ini via Browser biasa. Untuk mengisi absensi, Anda wajib memasang aplikasi ini terlebih dahulu.</p>
+      </div>
+      
+      <!-- PINTU RAHASIA: Ketuk teks kecil di bawah ini 5x untuk bypass -->
+      <span id="secret-bypass-trigger" class="text-[9px] text-slate-400 block select-none cursor-pointer mt-4">DESIGN & DEVELOPMENT BY ARFWCVK</span>
+    </div>
+  </div> 
+
+  <!-- Loader Sistem saat Menghubungkan ke Database -->
+  <div id="system-loader" class="fixed inset-0 bg-slate-50 z-[100] flex flex-col justify-center items-center transition-all duration-500">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-xs font-bold text-slate-600 tracking-wider uppercase animate-pulse">Menghubungkan ke Cloud Firestore...</p>
+    </div>
+  </div>
+
+  <div class="background-overlay absolute inset-0 -z-10"></div>
+
+  <!-- Header Sistem -->
+  <header class="w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200/95 border-b-4 border-b-blue-600 border-t border-slate-300/80 shadow-md sticky top-0 z-40 mb-6">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 py-3 md:py-5 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors text-xs md:text-sm font-bold">
+        <i class="fa-solid fa-arrow-left"></i> Kembali ke Portal
+      </a>
+      <div class="text-right flex flex-col items-end">
+        <div class="flex items-center gap-2 md:gap-3">
+          <img src="logosmk.png" alt="Logo" class="h-8 w-8 md:h-12 md:w-12 object-contain" onerror="this.src='https://placehold.co/100x100?text=SMK'">
+          <span class="text-xs md:text-lg font-black text-slate-800 tracking-wider">ABSENSI PKL 2026/2027</span>
+        </div>
+        <span id="current-date-absen" class="text-[9px] md:text-xs font-bold text-slate-500 mt-1"></span>
+        <span id="current-time-absen" class="text-[8px] md:text-[10px] font-mono text-blue-600 font-bold"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Konten Utama Absensi -->
+  <main class="flex-grow w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 py-4 flex flex-col justify-start items-center">
+
+    <!-- Form Login / Verifikasi Identitas Siswa -->
+    <section id="view-login" class="w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl bg-white/95 p-6 md:p-10 rounded-2xl shadow-sm border border-slate-100/80">
+      <div class="text-center mb-6 md:mb-8">
+        <h2 class="text-lg md:text-2xl font-bold text-slate-800">Verifikasi Identitas Siswa</h2>
+        <p class="text-[11px] md:text-sm text-slate-500 mt-1 md:mt-2">Silakan pilih kelas dan nama untuk memverifikasi status kehadiran hari ini.</p>
+      </div>
+
+      <form id="form-login" class="space-y-4 md:space-y-6">
+        <div>
+          <label class="block text-[11px] md:text-xs font-bold text-slate-600 uppercase mb-1 md:mb-2">Pilih Kelas</label>
+          <select id="select-kelas" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 md:py-3 text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="XII DPIB 1">XII DPIB 1</option>
+            <option value="XII DPIB 2">XII DPIB 2</option>
+            <option value="XII TKP">XII TKP</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[11px] md:text-xs font-bold text-slate-600 uppercase mb-1 md:mb-2">Nama Lengkap</label>
+          <select id="select-nama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 md:py-3 text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700" disabled>
+            <option value="">-- Pilih Nama Anda --</option>
+          </select>
+        </div>
+
+        <div id="status-box" class="hidden p-3 md:p-4 rounded-xl text-center border">
+          <p id="status-message" class="text-xs md:text-sm font-semibold"></p>
+        </div>
+
+        <button type="button" id="btn-lanjut-absen" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 md:py-3.5 px-4 rounded-xl text-xs md:text-sm transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Lanjutkan Presensi <i class="fa-solid fa-chevron-right text-[10px] md:text-xs"></i>
+        </button>
+      </form>
+    </section>
+
+    <!-- Halaman Utama Kamera & Deteksi Kamera -->
+    <section id="view-absen" class="hidden w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] bg-white/95 p-6 md:p-10 rounded-2xl shadow-sm border border-slate-100/80 space-y-4 md:space-y-6">
+      <div class="flex justify-between items-center pb-2 md:pb-4 border-b border-slate-100">
+        <div>
+          <h2 id="absen-siswa-nama" class="text-xs md:text-lg font-bold text-slate-800">Nama Siswa</h2>
+          <p id="absen-siswa-kelas" class="text-[10px] md:text-sm text-slate-500">Kelas Siswa</p>
+        </div>
+        <button id="btn-keluar" class="text-[10px] md:text-xs text-red-500 hover:text-red-700 font-semibold flex items-center gap-1 md:gap-2">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-start">
+        <div class="md:col-span-5 flex flex-col justify-center items-center space-y-3 md:space-y-5">
+          <div id="scanner-container" class="relative w-full max-w-[240px] md:max-w-[320px] lg:max-w-[380px] aspect-[3/4] bg-slate-900 rounded-2xl md:rounded-3xl overflow-hidden shadow-inner border border-slate-800 flex items-center justify-center mx-auto">
+            <video id="webcam" class="w-full h-full object-cover transform -scale-x-100" autoplay playsinline></video>
+            <div class="scanner-laser absolute w-full h-0.5 bg-blue-500/80 shadow-[0_0_10px_#3b82f6]"></div>
+            <div class="absolute inset-4 md:inset-6 border border-blue-500/20 rounded-xl md:rounded-2xl pointer-events-none"></div>
+          </div>
+          <canvas id="canvas-photo" class="hidden"></canvas>
+          <span class="text-[9px] md:text-xs text-slate-400 font-medium text-center hidden md:block">Posisikan wajah Anda tepat di dalam area sensor kamera di atas.</span>
+        </div>
+
+        <div class="md:col-span-7 space-y-4 md:space-y-6">
+          <form id="form-absen-action" class="space-y-3 md:space-y-5">
+            <div>
+              <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1 md:mb-2">Nama Perusahaan / Tempat PKL</label>
+              <input type="text" id="input-perusahaan" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 md:py-3 text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700" placeholder="Contoh: PT. Adhi Karya (Persero)" required>
+            </div>
+
+            <div>
+              <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1 md:mb-2">Jenis Presensi</label>
+              <div class="grid grid-cols-2 gap-2 md:gap-4">
+                <button type="button" id="type-masuk" class="py-2 md:py-3 px-3 border rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all"></button>
+                <button type="button" id="type-pulang" class="py-2 md:py-3 px-3 border rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all"></button>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 md:gap-3 mt-1.5 md:mt-3">
+                <button type="button" id="type-sakit" class="py-1.5 md:py-2.5 px-2 border rounded-lg md:rounded-xl text-[10px] md:text-xs font-semibold transition-all">Sakit</button>
+                <button type="button" id="type-izin" class="py-1.5 md:py-2.5 px-2 border rounded-lg md:rounded-xl text-[10px] md:text-xs font-semibold transition-all">Izin</button>
+                <button type="button" id="type-libur" class="py-1.5 md:py-2.5 px-2 border rounded-lg md:rounded-xl text-[10px] md:text-xs font-semibold transition-all">Libur</button>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-2 md:p-3 rounded-xl flex items-center gap-2 border border-slate-100">
+              <i class="fa-solid fa-location-dot text-xs md:text-sm text-rose-500 animate-pulse"></i>
+              <span id="gps-status" class="text-[9px] md:text-xs font-semibold text-slate-600">Mengambil lokasi GPS...</span>
+            </div>
+
+            <div id="journal-container" class="hidden">
+              <label id="journal-label" class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1 md:mb-2">Jurnal / Keterangan Alasan</label>
+              <textarea id="journal-text" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 md:py-3 text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700" placeholder="Tuliskan ringkasan kegiatan PKL hari ini..."></textarea>
+            </div>
+
+            <button type="submit" id="btn-submit-absen" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 md:py-4 rounded-xl text-xs md:text-base transition-all shadow-sm">
+              Kirim Data Presensi
+            </button>
+          </form>
+
+          <!-- Tampilan Pengiriman Data Berhasil -->
+          <div id="success-container" class="hidden text-center p-4 md:p-8 bg-emerald-50 border border-emerald-100 rounded-xl md:rounded-2xl space-y-3 md:space-y-4">
+            <div class="w-10 h-10 md:w-16 md:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-lg md:text-3xl">
+              <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+              <h3 class="text-xs md:text-lg font-bold text-emerald-800">Presensi Berhasil Dikirim!</h3>
+              <p class="text-[9px] md:text-sm text-emerald-600 mt-0.5 md:mt-1">Terima kasih, data Anda sudah tercatat di database.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 md:gap-4 mt-2 md:mt-4">
+              <button id="btn-export-slip" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-3 rounded-lg md:rounded-xl text-[9px] md:text-sm transition-all flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-eye"></i> Pratinjau Cetak
+              </button>
+              <button id="btn-download-slip" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 md:py-3 rounded-lg md:rounded-xl text-[9px] md:text-sm transition-all flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-file-arrow-down"></i> Unduh PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Panel Pemantauan Pembimbing PKL -->
+  <section id="view-pembimbing" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-center items-center p-2 sm:p-4">
+    <div class="bg-white w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] h-[95vh] rounded-2xl shadow-xl flex flex-col overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+        <div>
+          <h2 class="text-sm font-bold text-slate-800">Panel Pemantauan Pembimbing PKL</h2>
+          <p class="text-[10px] text-slate-500">Rekapitulasi kehadiran real-time XII DPIB & TKP</p>
+        </div>
+        <button id="btn-close-pembimbing" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Filter Pencarian Panel Pembimbing -->
+      <div class="p-4 bg-slate-50/50 border-b border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Filter Kelas</label>
+          <select id="pembimbing-filter-kelas" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <option value="SEMUA">Semua Kelas</option>
+            <option value="XII DPIB 1">XII DPIB 1</option>
+            <option value="XII DPIB 2">XII DPIB 2</option>
+            <option value="XII TKP">XII TKP</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Format Pemantauan</label>
+          <select id="pembimbing-filter-periode" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <option value="hari">Hari Ini (Harian)</option>
+            <option value="bulan">Bulanan (Ledger Tanggal 1-31)</option>
+          </select>
+        </div>
+        <div id="pembimbing-filter-bulan-container" class="hidden">
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Pilih Bulan PKL</label>
+          <select id="pembimbing-filter-bulan" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <option value="7">Juli 2026</option>
+            <option value="8">Agustus 2026</option>
+            <option value="9">September 2026</option>
+            <option value="10">Oktober 2026</option>
+            <option value="11">November 2026</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Cari & Kondisi Absen</label>
+          <div class="grid grid-cols-2 gap-1">
+            <input type="text" id="pembimbing-search" placeholder="Nama..." class="w-full bg-white border border-slate-200 rounded-lg px-1.5 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none">
+            <select id="pembimbing-filter-status-absen" class="w-full bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none">
+              <option value="SEMUA">Semua</option>
+              <option value="SUDAH">Sudah Absen</option>
+              <option value="BELUM">Belum Absen</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-2 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2">
+        <span class="text-[10px] text-slate-500 font-semibold italic">Tentukan filter untuk mengaktifkan pemantauan.</span>
+        <div class="flex items-center gap-2">
+          <button id="btn-open-correction" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-1 px-3 rounded-lg text-[10px] transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-user-pen"></i> Koreksi Presensi
+          </button>
+          <button id="btn-export-rekap" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-[10px] transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-print"></i> Cetak Rekap Laporan
+          </button>
+        </div>
+      </div>
+
+      <!-- Area Tabel Laporan -->
+      <div class="flex-grow overflow-auto p-4">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead id="tabel-rekap-head"></thead>
+          <tbody id="tabel-rekap-body" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+
+      <!-- Kontrol Tanggal Pembimbing -->
+      <div id="pembimbing-date-nav" class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs transition-all">
+        <span class="text-slate-500 font-bold uppercase tracking-wider text-[9px] flex items-center gap-1.5">
+          <i class="fa-solid fa-calendar-day text-blue-600"></i> Filter Kalender Kerja PKL Harian
+        </span>
+        <div class="flex items-center gap-1.5">
+          <button id="btn-prev-day" class="bg-white border border-slate-200 hover:bg-slate-100 px-3 py-2 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-1 transition-all" title="Hari Sebelumnya">
+            <i class="fa-solid fa-chevron-left text-[10px]"></i> Sebelumnya
+          </button>
+          <input type="date" id="pembimbing-date-input" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-center font-bold text-slate-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+          <button id="btn-next-day" class="bg-white border border-slate-200 hover:bg-slate-100 px-3 py-2 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-1 transition-all" title="Hari Selanjutnya">
+            Berikutnya <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MODAL AUTHENTICATION -->
+  <div id="modal-auth" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex justify-center items-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-xl border border-slate-100 flex flex-col gap-4 transform transition-all">
+      <div class="text-center">
+        <i class="fa-solid fa-lock text-blue-600 text-2xl mb-1.5"></i>
+        <h3 class="text-xs font-black text-slate-800 uppercase tracking-wide">PIN Keamanan Pembimbing</h3>
+        <p class="text-[10px] text-slate-400 mt-1">Masukkan PIN otentikasi resmi untuk mengaktifkan panel monitoring.</p>
+      </div>
+      <input type="password" id="input-pin" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-center font-bold tracking-widest text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••" maxlength="6">
+      <div class="grid grid-cols-2 gap-2">
+        <button id="btn-cancel-auth" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2 rounded-xl text-xs transition-all">Batal</button>
+        <button id="btn-submit-auth" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition-all">Verifikasi</button>
+      </div>
+    </div>
+  </div>
+  <div id="modal-auth-success" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[120] flex justify-center items-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-xl border border-slate-100 flex flex-col items-center gap-3">
+      <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl animate-bounce">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div class="text-center">
+        <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider">Akses Diberikan!</h3>
+        <p class="text-[10px] text-slate-400 mt-1">Sistem berhasil memuat database pembimbing.</p>
+      </div>
+    </div>
+  </div>
+  <div id="modal-auth-error" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[120] flex justify-center items-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-xl border border-slate-100 flex flex-col items-center gap-3">
+      <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-xl animate-pulse">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div class="text-center">
+        <h3 class="text-xs font-black text-slate-800 uppercase tracking-wider text-rose-600">PIN Salah!</h3>
+        <p class="text-[10px] text-slate-400 mt-1">Akses ditolak. Silakan masukkan PIN yang benar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KOREKSI DATA PRESENSI -->
+  <div id="modal-correction" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex justify-center items-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-xl border border-slate-100 flex flex-col gap-4">
+      <div class="text-center border-b pb-2">
+        <i class="fa-solid fa-user-pen text-amber-600 text-2xl mb-1"></i>
+        <h3 class="text-xs font-black text-slate-800 uppercase tracking-wide">Koreksi Data Presensi</h3>
+        <p class="text-[9px] text-slate-400">Pembimbing mengisi absen susulan/koreksi mandiri di bawah ini.</p>
+      </div>
+      <form id="form-correction" class="space-y-2.5">
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Nama & Kelas Peserta</label>
+          <select id="correction-select-siswa" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700" required>
+            <option value="">-- Pilih Nama Siswa --</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Tanggal Koreksi</label>
+          <input type="date" id="correction-date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700" required>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Nama Perusahaan / Tempat PKL</label>
+          <input type="text" id="correction-tempat" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700" placeholder="Contoh: PT. Adhi Karya" required>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Jenis Presensi & Status</label>
+          <div class="grid grid-cols-2 gap-1.5">
+            <select id="correction-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700" required>
+              <option value="Masuk">Absen Datang</option>
+              <option value="Pulang">Absen Pulang</option>
+              <option value="Sakit">Sakit</option>
+              <option value="Izin">Izin</option>
+              <option value="Libur">Libur</option>
+            </select>
+            <input type="text" id="correction-waktu" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 text-center font-bold" placeholder="08:00:00 WIB" required>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Keterangan / Jurnal</label>
+          <textarea id="correction-jurnal" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-xs text-slate-700" placeholder="Keterangan koreksi manual oleh pembimbing..."></textarea>
+        </div>
+        <div>
+          <label class="block text-[9px] font-bold text-rose-500 uppercase mb-0.5">Kata Sandi Otorisasi (change)</label>
+          <input type="password" id="correction-password" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-center font-bold tracking-widest text-slate-800" placeholder="••••••••" required>
+        </div>
+        <div class="grid grid-cols-2 gap-2 pt-2">
+          <button type="button" id="btn-cancel-correction" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2 rounded-xl text-xs transition-all">Batal</button>
+          <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-xl text-xs transition-all">Simpan Koreksi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full bg-gradient-to-t from-slate-200 to-slate-100 border-t-2 border-slate-300 py-3.5 md:py-5 mt-8 shadow-inner">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 flex justify-between items-center">
+      <p class="text-[10px] md:text-xs text-slate-600 font-bold tracking-wide">© 2026 DPIB & TKP | SMKN2TB - All Rights Reserved.</p>
+      <button id="btn-secret-trigger" class="text-[10px] md:text-xs text-slate-500 hover:text-slate-700 font-bold cursor-pointer transition-colors">
+        <i class="fa-solid fa-user-tie"></i> Admin Panel
+      </button>
+    </div>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>

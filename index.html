@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Digital Siswa DPIB & TKP</title>
+  
+  <!-- Mendaftarkan Identitas PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+  <!-- LAYAR BLOKIR KHUSUS NON-PWA (DENGAN TOMBOL INSTAL & TOMBOL RAHASIA) -->
+  <div id="pwa-blocker" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[200] flex flex-col justify-center items-center p-6 text-center">
+    <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl border border-slate-100 space-y-4">
+      <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto shadow-sm animate-bounce">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-sm font-black text-slate-800 uppercase tracking-wide">Aplikasi Wajib Diinstal</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">Sistem mendeteksi Anda membuka halaman melalui Browser biasa. Anda wajib menginstal aplikasi ini ke HP Anda.</p>
+      </div>
+      <button id="btn-pwa-install-modal" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md hidden">
+        <i class="fa-solid fa-download"></i> Instal Aplikasi Sekarang
+      </button>
+      
+      <!-- PINTU RAHASIA: Ketuk teks kecil di bawah ini 5x untuk bypass -->
+      <span id="secret-bypass-trigger" class="text-[9px] text-slate-400 block select-none cursor-pointer mt-4">DESIGN & DEVELOPMENT BY ARFWCVK</span>
+    </div>
+  </div>
+
+  <div id="system-loader" class="fixed inset-0 bg-slate-50 z-[100] flex flex-col justify-center items-center transition-all duration-500">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-xs font-bold text-slate-600 tracking-wider uppercase animate-pulse">Menghubungkan ke Sistem...</p>
+    </div>
+  </div>
+
+  <div class="background-overlay absolute inset-0 -z-10"></div>
+
+  <!-- Header -->
+  <header class="w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200/95 border-b-4 border-b-blue-600 border-t border-slate-300/80 shadow-md sticky top-0 z-40">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 sm:px-8 py-3 md:py-5 flex justify-between items-center">
+      <div class="flex items-center gap-3 md:gap-5">
+        <img src="logosmk.png" alt="Logo SMK" class="h-10 w-10 md:h-14 md:w-14 object-contain" onerror="this.src='https://placehold.co/100x100?text=SMK'">
+        <div>
+          <h1 class="text-xs sm:text-sm md:text-xl font-black tracking-wide text-slate-800 uppercase">DIGITAL DASHBOARD</h1>
+          <p class="text-[10px] sm:text-xs md:text-sm text-slate-600 font-bold">DPIB - TKP | SMKN2 TB</p>
+        </div>
+      </div>
+      <div class="text-right hidden sm:block">
+        <p id="current-date" class="text-xs md:text-sm font-bold text-slate-700">Memuat tanggal...</p>
+        <p id="current-time" class="text-[10px] md:text-xs text-blue-600 font-mono font-bold">00:00:00 WIB</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="flex-grow w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 py-6 md:py-10 flex flex-col justify-start items-center">
+    
+    <section class="text-center mb-6 md:mb-10 max-w-lg md:max-w-2xl">
+      <span class="px-3 py-1 md:px-4 md:py-1.5 bg-blue-200 text-blue-800 rounded-full text-[12px] md:text-sm font-bold tracking-wider uppercase">Portal Siswa</span>
+      <h2 class="text-xl md:text-3xl font-bold text-slate-800 mt-2.5 md:mt-4 leading-tight">Selamat Datang</h2>
+      <p class="text-xs md:text-base text-slate-600 mt-1.5 md:mt-3">Akses layanan dan administrasi akademik kompetensi keahlian DPIB & TKP.</p>
+    </section>
+
+    <!-- Kartu Menu Utama -->
+    <section class="space-y-4 md:space-y-6 w-full max-w-lg md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
+      
+      <!-- Tombol Instalasi PWA (Hanya muncul jika dibuka di browser biasa) -->
+      <button id="btn-install-pwa" class="hidden w-full flex items-center justify-between p-4 sm:p-6 rounded-2xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/60 transition-all duration-300 shadow-sm">
+        <div class="flex items-center gap-4 sm:gap-6 text-left">
+          <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+            <i class="fa-solid fa-download text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-base font-bold text-blue-850 uppercase">Instal Aplikasi Presensi</h3>
+            <p class="text-[9px] sm:text-xs text-blue-600 font-medium mt-1">Ketuk di sini untuk memasang aplikasi absensi resmi langsung ke layar HP Anda.</p>
+          </div>
+        </div>
+        <div class="text-blue-600 pr-2">
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </button>
+
+      <!-- Kartu Utama: Absensi PKL -->
+      <a href="absensipkl.html" class="card-interactive card-pkl group flex items-center justify-between p-4 sm:p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:border-blue-500 hover:bg-white transition-all duration-300">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-blue-50/80 border border-blue-100/50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+            <i class="fa-solid fa-circle-user text-xl sm:text-2xl"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="text-xs sm:text-base font-bold text-slate-800 tracking-wide uppercase">Absensi PKL</h3>
+              <span class="text-[8px] sm:text-[9px] bg-red-50 text-red-600 font-bold px-2 py-0.5 rounded-full border border-red-200 uppercase tracking-wider">Khusus Kelas XII</span>
+            </div>
+            <p class="text-[9px] sm:text-xs text-slate-500 font-medium mt-1">Angkatan 2026/2027 • Akses presensi harian & jurnal kegiatan</p>
+          </div>
+        </div>
+        <div class="text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 pr-2">
+          <i class="fa-solid fa-arrow-right text-sm sm:text-base"></i>
+        </div>
+      </a>
+
+      <!-- Kartu Pendukung 1: Under Construction -->
+      <div class="blueprint-draft card-pending-1 relative overflow-hidden flex items-center justify-between p-4 sm:p-6 rounded-2xl border-2 border-dashed border-slate-300/80 opacity-80">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-slate-100/80 border border-slate-200 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-gear fa-2xl fa-width-auto"></i>
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">Dalam tahap pengembangan</h3>
+            <p class="text-[9px] sm:text-xs text-slate-400 font-medium mt-0.5">Cooming Soon</p>
+          </div>
+        </div>
+        <div class="text-slate-300 pr-2">
+          <i class="fa-solid fa-lock fa-xl" style="color: rgba(0, 0, 0, 0.219);"></i>
+        </div>
+      </div>
+
+      <!-- Kartu Pendukung 2: Under Construction -->
+      <div class="blueprint-draft card-pending-2 relative overflow-hidden flex items-center justify-between p-4 sm:p-6 rounded-2xl border-2 border-dashed border-slate-300/80 opacity-80">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-slate-100/80 border border-slate-200 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-gear fa-2xl fa-width-auto"></i>
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">Dalam tahap pengembangan</h3>
+            <p class="text-[9px] sm:text-xs text-slate-400 font-medium mt-0.5">Cooming Soon</p>
+          </div>
+        </div>
+        <div class="text-slate-300 pr-2">
+          <i class="fa-solid fa-lock fa-xl" style="color: rgba(0, 0, 0, 0.219);"></i>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-gradient-to-t from-slate-200 to-slate-100 border-t-2 border-slate-300 py-4 mt-12 shadow-inner">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] mx-auto px-4 text-center">
+      <p class="text-[9px] sm:text-xs text-slate-600 font-bold tracking-wide">
+        © 2026 DPIB & TKP <span class="text-slate-400 mx-1">|</span> SMKN2TB - All Rights Reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT KONTROL LOGIKA PWA, DETEKSI BLOKIR, DAN PIN BYPASS PERANCANG -->
+  <script>
+    // 1. Jalankan Jam Digital
+    function runClock() {
+      const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+      const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const d = new Date();
+      document.getElementById("current-date").textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      document.getElementById("current-time").textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')} WIB`;
+    }
+    setInterval(runClock, 1000); runClock();
+
+    // 2. Hilangkan Loading Awal
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("system-loader");
+      if (loader) { loader.classList.add("opacity-0", "pointer-events-none"); setTimeout(() => loader.remove(), 500); }
+    });
+
+    // 3. Logika Proteksi Wajib PWA & Ketukan Pintu Belakang Rahasia
+    function verifyPwaState() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      const isDeveloperBypassed = localStorage.getItem('pwa_bypass_allowed') === 'true';
+      const blockerElement = document.getElementById('pwa-blocker');
+
+      if (!isStandalone && !isDeveloperBypassed) {
+        blockerElement.classList.remove('hidden');
+      } else {
+        blockerElement.classList.add('hidden');
+      }
+
+      // Deteksi Ketukan Rahasia (Bypass Perancang)
+      const secretButton = document.getElementById('secret-bypass-trigger');
+      if (secretButton) {
+        let clickCounts = 0;
+        secretButton.addEventListener('click', () => {
+          clickCounts++;
+          if (clickCounts >= 5) {
+            clickCounts = 0;
+            const password = prompt("Masukkan Kata Sandi Otorisasi Perancang:");
+            if (password === "perancang2026") {
+              localStorage.setItem('pwa_bypass_allowed', 'true');
+              alert("Akses Perancang Diberikan! Mengalihkan ke browser...");
+              blockerElement.classList.add('hidden');
+              window.location.reload();
+            } else {
+              alert("Kata sandi salah!");
+            }
+          }
+        });
+      }
+    }
+    verifyPwaState();
+
+    // 4. Mendaftarkan Service Worker PWA ke Browser
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log("Service Worker berhasil dijalankan!"))
+          .catch(err => console.log("Service Worker gagal dijalankan", err));
+      });
+    }
+
+    // 5. Menangani Logika Tombol Install Aplikasi (beforeinstallprompt)
+    let saveInstallPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      saveInstallPrompt = e;
+      
+      // Munculkan tombol instal di menu utama
+      const installBtnContainer = document.getElementById('btn-install-pwa');
+      if (installBtnContainer) installBtnContainer.classList.remove('hidden');
+
+      // Munculkan tombol instal di dalam modal pemblokir
+      const installBtnModal = document.getElementById('btn-pwa-install-modal');
+      if (installBtnModal) installBtnModal.classList.remove('hidden');
+    });
+
+    function triggerAppInstallation() {
+      if (saveInstallPrompt) {
+        saveInstallPrompt.prompt();
+        saveInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('Siswa menyetujui pemasangan aplikasi.');
+          }
+          saveInstallPrompt = null;
+        });
+      }
+    }
+
+    document.getElementById('btn-install-pwa').addEventListener('click', triggerAppInstallation);
+    document.getElementById('btn-pwa-install-modal').addEventListener('click', triggerAppInstallation);
+  </script>
+</body>
+</html>
