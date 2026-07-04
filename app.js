@@ -351,6 +351,10 @@ document.getElementById("btn-keluar").addEventListener("click", () => {
   document.getElementById("view-login").classList.remove("hidden");
   document.getElementById("form-login").reset();
   document.getElementById("status-box").classList.add("hidden");
+
+  // FIX BUG 1: Memulihkan visibilitas form absen dan menyembunyikan box bukti sukses saat keluar
+  document.getElementById("form-absen-action").classList.remove("hidden");
+  document.getElementById("success-container").classList.add("hidden");
 });
 
 // ==========================================
@@ -455,10 +459,10 @@ document.getElementById("form-absen-action").addEventListener("submit", async (e
 });
 
 // ==========================================
-// TAHAP 4: DUAL OPSI EKSPOR PDF & PRATINJAU (FOTO DI-PERBESAR)
+// TAHAP 4: DUAL OPSI EKSPOR PDF & PRATINJAU (PENAMBAHAN WATERMARK, DISCLAMER, & SECURITY SEAL)
 // ==========================================
 
-// OPSI A: PRATINJAU & CETAK HTML MANDIRI (FOTO DIPERBESAR - LEBIH PRO)
+// OPSI A: PRATINJAU & CETAK HTML MANDIRI (DENGAN WATERMARK SAMAR, SEAL DIGITAL, & DISCLAIMER)
 function printSingleSlipHTML(data) {
   const printWindow = window.open("", "_blank");
   
@@ -470,6 +474,7 @@ function printSingleSlipHTML(data) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Cetak Slip Presensi - ${data.nama}</title>
       <script src="https://cdn.tailwindcss.com"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
       <style>
         @media print {
           body, div, table, tr, td, th, h1, h2, h3, p, span, img {
@@ -480,7 +485,7 @@ function printSingleSlipHTML(data) {
             background-color: #ffffff !important;
           }
         }
-        /* Memaksa garis tabel tetap solid dan tidak putus-putus */
+        /* Memaksa garis tabel tetap solid */
         table, th, td {
           border-style: solid !important;
           border-color: #cbd5e1 !important;
@@ -488,11 +493,21 @@ function printSingleSlipHTML(data) {
       </style>
     </head>
     <body class="bg-white p-6 text-slate-800" onload="window.print()">
-      <div class="max-w-2xl mx-auto border border-slate-300 rounded-2xl overflow-hidden shadow-sm">
+      <!-- Kontainer Utama Slip Absensi -->
+      <div class="max-w-2xl mx-auto border border-slate-300 rounded-2xl overflow-hidden shadow-sm relative">
+        
+        <!-- FITUR BARU: Latar Belakang Watermark Samar Logosmk.png -->
+        <div class="absolute inset-0 -z-10 flex items-center justify-center opacity-[0.05] pointer-events-none">
+          <img src="logosmk.png" alt="Logo SMK" class="w-80 h-80 object-contain" onerror="this.style.display='none'">
+        </div>
+
         <!-- Header Slip -->
-        <div class="bg-blue-600 p-6 text-white">
-          <h1 class="text-xl font-black tracking-wide uppercase">BUKTI RESMI PRESENSI PKL</h1>
-          <p class="text-[9px] text-blue-100 font-medium mt-1 leading-tight">KOMPETENSI KEAHLIAN: DESAIN PEMODELAN & INFORMASI BANGUNAN - TEKNIK KONSTRUKSI & PERUMAHAN</p>
+        <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
+          <div>
+            <h1 class="text-xl font-black tracking-wide uppercase">BUKTI RESMI PRESENSI PKL</h1>
+            <p class="text-[9px] text-blue-100 font-medium mt-1 leading-tight">DPIB - TKP | TP.2026/2027</p>
+          </div>
+          <img src="logosmk.png" alt="Logo" class="h-10 w-10 object-contain brightness-0 invert" onerror="this.style.display='none'">
         </div>
 
         <div class="p-6 space-y-6">
@@ -517,7 +532,6 @@ function printSingleSlipHTML(data) {
             <!-- Foto Lampiran (Potret 3:4 Diperbesar) -->
             <div class="w-36 sm:w-44 shrink-0 flex flex-col items-center">
               ${data.foto === "KOREKSI" ? `
-                <!-- Lencana Koreksi Manual Pembimbing -->
                 <div class="border-2 border-amber-500 bg-amber-50 text-amber-700 rounded-xl aspect-[3/4] w-full flex flex-col justify-center items-center text-center p-3 font-bold shadow-inner">
                   <i class="fa-solid fa-signature text-3xl mb-2"></i>
                   <span class="text-[9px] uppercase tracking-wider leading-tight">Otorisasi Manual Pembimbing</span>
@@ -540,11 +554,40 @@ function printSingleSlipHTML(data) {
             <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ringkasan Kegiatan / Jurnal Harian:</h3>
             <p class="text-xs text-slate-700 italic leading-relaxed font-serif">${data.jurnal}</p>
           </div>
+
+          <!-- FITUR BARU: Segel Autentikasi Keamanan Digital & Tanda Tangan Elektronik -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-150 items-center">
+            <div class="flex items-center gap-3 p-3 bg-blue-50/60 rounded-xl border border-blue-100/70">
+              <div class="text-blue-600 text-2xl shrink-0">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <h4 class="text-[9px] font-extrabold text-blue-800 uppercase tracking-wider">VERIFIED DIGITAL SEAL</h4>
+                <p class="text-[8px] text-blue-600 font-medium">Sistem Portal PKL SMKN 2 TB</p>
+                <p class="text-[7px] text-slate-400 font-mono mt-0.5">Stempel Verifikasi: ${data.waktu}</p>
+              </div>
+            </div>
+            
+            <div class="text-right flex flex-col items-end">
+              <div class="border border-emerald-500 bg-emerald-50 text-emerald-700 rounded-lg px-2 py-1 text-[8px] font-black uppercase tracking-widest inline-flex items-center gap-1">
+                <i class="fa-solid fa-certificate"></i> TERAUTENTIKASI SECARA ELEKTRONIK
+              </div>
+              <span class="text-[7px] text-slate-400 font-mono mt-1">ID Autentikasi: ${data.buktiCode}</span>
+            </div>
+          </div>
+
+          <!-- FITUR BARU: Teks Disclaimer Resmi untuk Keabsahan -->
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200/50">
+            <p class="text-[8px] text-slate-400 leading-relaxed text-center font-medium">
+              <strong>*</strong> Dokumen ini merupakan bukti kehadiran resmi yang diterbitkan secara elektronik oleh Sistem Portal Digital PKL Jurusan DPIB & TKP. Bukti ini sah dan valid digunakan untuk keperluan administratif akademik tanpa memerlukan tanda tangan basah.
+            </p>
+          </div>
+
         </div>
 
         <!-- Footer Slip -->
         <div class="bg-slate-50 border-t p-4 text-center">
-          <p class="text-[8px] text-slate-400 font-medium">Dokumen ini dihasilkan secara resmi dan otomatis melalui Sistem Portal Digital PKL Angkatan 2026/2027.</p>
+          <p class="text-[8px] text-slate-400 font-medium">Dokumen ini dihasilkan secara resmi dan otomatis melalui Sistem Absensi Digital PKL Angkatan 2026/2027.</p>
         </div>
       </div>
     </body>
@@ -555,7 +598,7 @@ function printSingleSlipHTML(data) {
   printWindow.document.close();
 }
 
-// OPSI B: UNDUH PDF LANGSUNG (jsPDF + FOTO DI-PERBESAR)
+// OPSI B: UNDUH PDF LANGSUNG (DENGAN SECURITY SEAL & DISCLAIMER)
 function downloadSinglePDFDirect(data) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -571,7 +614,7 @@ function downloadSinglePDFDirect(data) {
   
   doc.setFont("Helvetica", "normal");
   doc.setFontSize(9);
-  doc.text("KOMPETENSI KEAHLIAN: DESAIN PEMODELAN & INFORMASI BANGUNAN - TEKNIK KONSTRUKSI & PERUMAHAN", 20, 28);
+  doc.text("DPIB - TKP | TP.2026/2027", 20, 28);
 
   // Content Data
   doc.setTextColor(51, 65, 85);
@@ -604,7 +647,7 @@ function downloadSinglePDFDirect(data) {
     currentY += 10;
   });
 
-  // FOTO DIPERBESAR DI PDF (Dari 45x45 menjadi 54x72 pas rasio 3:4)
+  // FOTO DIPERBESAR DI PDF (Rasio Potret 3:4)
   if (data.foto === "KOREKSI") {
     doc.rect(135, 68, 54, 72);
     doc.setFont("Helvetica", "bold");
@@ -637,11 +680,59 @@ function downloadSinglePDFDirect(data) {
   const splitText = doc.splitTextToSize(data.jurnal, 170);
   doc.text(splitText, 20, currentY);
 
+  // FITUR BARU: Menambahkan Security Seal / Segel Autentikasi Elektronik pada PDF
+  let stampY = currentY + 30;
+  if (stampY > 235) stampY = 235; // Cegah overflow ke halaman berikutnya
+
+  // Box Stempel Digital
+  doc.setFillColor(240, 244, 255);
+  doc.rect(20, stampY, 170, 24, "F");
+  doc.setDrawColor(191, 219, 254);
+  doc.setLineWidth(0.3);
+  doc.rect(20, stampY, 170, 24);
+
+  // Informasi Stempel
+  doc.setTextColor(30, 58, 138);
+  doc.setFont("Helvetica", "bold");
+  doc.setFontSize(8);
+  doc.text("VERIFIED DIGITAL SEAL - SECURE PKL SYSTEM", 25, stampY + 7);
+
+  doc.setTextColor(59, 130, 246);
+  doc.setFont("Helvetica", "normal");
+  doc.setFontSize(7);
+  doc.text(`Waktu Verifikasi Sistem: ${data.waktu}`, 25, stampY + 12);
+  doc.text(`ID Enkripsi: ${data.buktiCode}`, 25, stampY + 17);
+
+  // Lencana Terautentikasi Elektronik
+  doc.setFillColor(209, 250, 229);
+  doc.rect(125, stampY + 5, 60, 14, "F");
+  doc.setDrawColor(16, 185, 129);
+  doc.rect(125, stampY + 5, 60, 14);
+
+  doc.setTextColor(6, 95, 70);
+  doc.setFont("Helvetica", "bold");
+  doc.setFontSize(7);
+  doc.text("TERAUTENTIKASI ELEKTRONIK", 129, stampY + 13);
+
+  // FITUR BARU: Disclaimer Keabsahan Dokumen pada PDF
+  let disclaimerY = stampY + 28;
+  doc.setFillColor(248, 250, 252);
+  doc.rect(20, disclaimerY, 170, 14, "F");
+  doc.setDrawColor(226, 232, 240);
+  doc.rect(20, disclaimerY, 170, 14);
+
+  doc.setTextColor(100, 116, 139);
+  doc.setFont("Helvetica", "normal");
+  doc.setFontSize(6.5);
+  const disclaimerText = "Dokumen ini merupakan bukti kehadiran resmi yang diterbitkan secara elektronik oleh Sistem Portal Digital PKL Jurusan DPIB & TKP. Bukti ini sah dan valid digunakan untuk keperluan administratif akademik tanpa memerlukan tanda tangan basah.";
+  const splitDisclaimer = doc.splitTextToSize(disclaimerText, 160);
+  doc.text(splitDisclaimer, 25, disclaimerY + 5);
+
   // Footer Slip
   doc.setFont("Helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(148, 163, 184);
-  doc.text("Dokumen ini dihasilkan secara resmi dan otomatis melalui Sistem Portal Digital PKL Angkatan 2026/2027.", 20, 280);
+  doc.text("Dokumen ini dihasilkan secara resmi dan otomatis melalui Sistem Portal Digital PKL Angkatan 2026/2027.", 20, 285);
 
   doc.save(`Bukti_Absen_${data.nama.replace(/\s+/g, '_')}_${data.tanggal}.pdf`);
 }
@@ -657,7 +748,7 @@ const secretTrigger = document.getElementById("btn-secret-trigger");
 const panelPembimbing = document.getElementById("view-pembimbing");
 const closePembimbing = document.getElementById("btn-close-pembimbing");
 
-// Elemen-Elemen Modal Autentikasi Baru
+// Elemen-Elemen Modal Autentikasi
 const modalAuth = document.getElementById("modal-auth");
 const modalAuthSuccess = document.getElementById("modal-auth-success");
 const modalAuthError = document.getElementById("modal-auth-error");
@@ -720,7 +811,7 @@ closePembimbing.addEventListener("click", () => {
 });
 
 // ==========================================
-// TAHAP 6: LOGIKA FILTER, PAGINASI, DAN AKUMULASI STATISTIK SISWA [1][2]
+// TAHAP 6: LOGIKA FILTER, PAGINASI, DAN AKUMULASI STATISTIK SISWA
 // ==========================================
 
 // Paginasi Tanggal (Prev-Next Day)
@@ -759,19 +850,17 @@ document.getElementById("pembimbing-filter-bulan").addEventListener("change", ()
   loadPembimbingData();
 });
 
-// Fungsi Menghitung Seluruh Hari Kalender Aktif (Termasuk Sabtu & Minggu) [2]
+// Fungsi Menghitung Seluruh Hari Kalender Aktif (Termasuk Sabtu & Minggu)
 function getElapsedCalendarDays(startDateStr, endDateStr) {
   let start = new Date(startDateStr);
   let end = new Date(endDateStr);
   if (end < start) return 0;
   
   const diffTime = Math.abs(end - start);
-  // Tambahkan 1 hari agar perhitungannya bersifat inklusif
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   return diffDays;
 }
 
-// Fungsi Menghitung Statistik Kumulatif Siswa dari 15 Juli 2026 s.d Tanggal Filter [2]
 // Fungsi Menghitung Statistik Kumulatif (Versi Akurat sesuai Matriks)
 function calculateSiswaStats(siswaNama, allRecords, upToDateStr) {
   let limitDate = upToDateStr;
@@ -808,7 +897,7 @@ function calculateSiswaStats(siswaNama, allRecords, upToDateStr) {
   
   let totalSchoolDays = getElapsedCalendarDays(PKL_START_DATE, limitDate);
   
-  // LOGIKA BARU: Jika tanggal yang dicek adalah hari ini, jangan jadikan hari ini sebagai target Alpa
+  // Jika tanggal yang dicek adalah hari ini, jangan jadikan hari ini sebagai target Alpa
   const todayStr = getTodayString();
   if (limitDate >= todayStr) {
     totalSchoolDays -= 1; // Kurangi 1 hari agar hari ini dimaafkan (belum dihitung Alpa)
@@ -836,17 +925,15 @@ async function loadPembimbingData() {
   const namaBulanArr = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   const namaBulanTerpilih = namaBulanArr[selectedBulan - 1];
 
-// --- KONTROL NAVIGASI TANGGAL BAWAH (INSTRUKSI BARU) ---
+  // KONTROL NAVIGASI TANGGAL BAWAH
   const dateNavContainer = document.getElementById("pembimbing-date-nav");
   const btnNext = document.getElementById("btn-next-day");
   
   if (dateNavContainer) {
     if (filterPeriode === "bulan") {
-      // Sembunyikan navigasi bawah saat Format Bulanan dipilih
       dateNavContainer.classList.add("hidden");
       dateNavContainer.classList.remove("flex", "sm:flex-row");
     } else {
-      // Tampilkan kembali saat Format Harian dipilih
       dateNavContainer.classList.remove("hidden");
       dateNavContainer.classList.add("flex", "sm:flex-row");
     }
@@ -854,16 +941,14 @@ async function loadPembimbingData() {
 
   if (btnNext) {
     const todayStr = getTodayString();
-    // Matikan tombol 'Berikutnya' jika kalender sedang berada di hari ini atau di masa depan
     if (selectedDateStr >= todayStr) {
       btnNext.disabled = true;
-      btnNext.classList.add("opacity-50", "cursor-not-allowed");
+      btnNext.classList.add("opacity-50", "opacity-50", "cursor-not-allowed");
     } else {
       btnNext.disabled = false;
       btnNext.classList.remove("opacity-50", "cursor-not-allowed");
     }
   }
-  // --------------------------------------------------------
 
   if (!isRekapTableInitialized) {
     thead.innerHTML = "";
@@ -902,7 +987,7 @@ async function loadPembimbingData() {
     let allDbRecords = [];
     querySnapshot.forEach(docSnap => { allDbRecords.push(docSnap.data()); });
 
-    // === MENYARING SELURUH SISWA (TANPA PAGINASI) ===
+    // === MENYARING SELURUH SISWA ===
     let matchingStudents = [];
     const kelasList = filterKelas === "SEMUA" ? Object.keys(DATA_SISWA) : [filterKelas];
 
@@ -1012,13 +1097,14 @@ async function loadPembimbingData() {
           }
         }
 
+        // FIX BUG 2: Menambahkan kelas 'whitespace-nowrap' pada span labelStatus agar border simetris
         tr.innerHTML = `
           <td class="py-3 px-2 text-center font-bold text-slate-400">${globalNo++}</td>
           <td class="py-3 px-3 font-semibold text-slate-800">${siswaNama} <div class="text-[8px] text-slate-400 font-normal">${kelas}</div></td>
           <td class="py-3 px-3 font-medium text-slate-600">${currentPlace}</td>
           <td class="py-3 px-2 text-center"><div class="flex flex-col items-center justify-center gap-0.5">${iconDatang}</div></td>
           <td class="py-3 px-2 text-center"><div class="flex flex-col items-center justify-center gap-0.5">${iconPulang}</div></td>
-          <td class="py-3 px-2 text-center"><span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded border ${colorStatus} uppercase">${labelStatus}</span></td>
+          <td class="py-3 px-2 text-center"><span class="whitespace-nowrap text-[9px] font-extrabold px-1.5 py-0.5 rounded border ${colorStatus} uppercase">${labelStatus}</span></td>
           <td class="py-3 px-1.5 text-center bg-blue-50/20 font-black text-blue-600 border-x border-slate-100">${stats.hadir}</td>
           <td class="py-3 px-1.5 text-center bg-emerald-50/20 font-black text-emerald-600 border-r border-slate-100">${stats.sakit}</td>
           <td class="py-3 px-1.5 text-center bg-amber-50/20 font-black text-amber-600 border-r border-slate-100">${stats.izin}</td>
@@ -1099,14 +1185,34 @@ async function loadPembimbingData() {
             if (recordIzin.type === "Sakit") { symbol = "S"; colorClass = "text-emerald-600 font-bold"; sakitCount++; }
             if (recordIzin.type === "Izin") { symbol = "I"; colorClass = "text-amber-500 font-bold"; izinCount++; }
             if (recordIzin.type === "Libur") { symbol = "L"; colorClass = "text-slate-500 font-bold"; liburCount++; }
-          } else if (recordMasuk || recordPulang) {
-            symbol = `<i class="fa-solid fa-check text-blue-600 text-[10px]"></i>`;
-            colorClass = "";
-            hadirCount++;
           } else {
+            // FIX BUG 3: Perbaikan logika status hari berjalan vs alpa
             const todayStr = getTodayString();
-            if (currentDateLoopStr < todayStr) {
-              symbol = "A"; colorClass = "text-rose-600 font-black"; alpaCount++;
+            
+            // A. Hari Berjalan (Hari Ini)
+            if (currentDateLoopStr === todayStr) {
+              if (recordMasuk && recordPulang) {
+                symbol = `<i class="fa-solid fa-check text-blue-600 text-[10px]"></i>`;
+                colorClass = "";
+                hadirCount++;
+              } else {
+                // Hari berjalan tapi belum absen lengkap -> Ditandai segitiga kuning (Belum Lengkap)
+                symbol = `<i class="fa-solid fa-triangle-exclamation text-amber-500 text-[10px]"></i>`;
+                colorClass = "";
+              }
+            } 
+            // B. Hari Kemarin / Yang Sudah Lewat
+            else if (currentDateLoopStr < todayStr) {
+              if (recordMasuk && recordPulang) {
+                symbol = `<i class="fa-solid fa-check text-blue-600 text-[10px]"></i>`;
+                colorClass = "";
+                hadirCount++;
+              } else {
+                // Sudah lewat hari tapi tidak absen lengkap -> Alpa (A)
+                symbol = "A"; 
+                colorClass = "text-rose-600 font-black"; 
+                alpaCount++;
+              }
             }
           }
           rowDaysHTML += `<td class="py-2.5 text-center border-r border-slate-200/50 ${colorClass}">${symbol}</td>`;
@@ -1303,3 +1409,42 @@ formCorrection.addEventListener("submit", async (e) => {
     alert("Gagal menyimpan data ke database. Coba lagi.");
   }
 });
+
+// =======================================================================
+// KODE OPERASIONAL PROTEKSI PWA DAN BYPASS RAHASIA PERANCANG (HALAMAN ABSEN)
+// =======================================================================
+function verifyPwaStateAbsen() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isDeveloperBypassed = localStorage.getItem('pwa_bypass_allowed') === 'true';
+  const blockerElement = document.getElementById('pwa-blocker');
+
+  if (blockerElement) {
+    if (!isStandalone && !isDeveloperBypassed) {
+      blockerElement.classList.remove('hidden');
+    } else {
+      blockerElement.classList.add('hidden');
+    }
+  }
+
+  // Deteksi Ketukan Rahasia di Halaman Absen
+  const secretButton = document.getElementById('secret-bypass-trigger');
+  if (secretButton) {
+    let clickCounts = 0;
+    secretButton.addEventListener('click', () => {
+      clickCounts++;
+      if (clickCounts >= 5) {
+        clickCounts = 0;
+        const password = prompt("Masukkan Kata Sandi Otorisasi Perancang:");
+        if (password === "perancang2026") {
+          localStorage.setItem('pwa_bypass_allowed', 'true');
+          alert("Akses Perancang Diberikan! Mengalihkan ke browser...");
+          if (blockerElement) blockerElement.classList.add('hidden');
+          window.location.reload();
+        } else {
+          alert("Kata sandi salah!");
+        }
+      }
+    });
+  }
+}
+verifyPwaStateAbsen();
