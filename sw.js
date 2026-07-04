@@ -1,5 +1,5 @@
 // Nama tempat penyimpanan data sementara (Cache)
-const CACHE_NAME = 'absensi-pkl-v1';
+const CACHE_NAME = 'absensi-pkl-v2';
 const ASSETS = [
   './',
   './index.html',
