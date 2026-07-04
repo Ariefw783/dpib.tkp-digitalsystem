@@ -10,7 +10,24 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+  
+ <!-- LAYAR BLOKIR KHUSUS NON-PWA DI HALAMAN ABSEN -->
+  <div id="pwa-blocker" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[200] flex flex-col justify-center items-center p-6 text-center">
+    <div class="bg-white max-w-sm w-full rounded-2xl p-6 shadow-2xl border border-slate-100 space-y-4">
+      <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto shadow-sm animate-bounce">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div class="space-y-1">
+        <h3 class="text-sm font-black text-slate-800 uppercase tracking-wide">Aplikasi Wajib Diinstal</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">Sistem mendeteksi Anda membuka halaman ini via Browser biasa. Untuk mengisi absensi, Anda wajib memasang aplikasi ini terlebih dahulu.</p>
+      </div>
+      
+      <!-- PINTU RAHASIA: Ketuk teks kecil di bawah ini 5x untuk bypass -->
+      <span id="secret-bypass-trigger" class="text-[9px] text-slate-400 block select-none cursor-pointer mt-4">DESIGN & DEVELOPMENT BY ARFWCVK</span>
+    </div>
+  </div> 
 
+  <!-- Loader Sistem saat Menghubungkan ke Database -->
   <div id="system-loader" class="fixed inset-0 bg-slate-50 z-[100] flex flex-col justify-center items-center transition-all duration-500">
     <div class="flex flex-col items-center gap-4">
       <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -20,7 +37,7 @@
 
   <div class="background-overlay absolute inset-0 -z-10"></div>
 
-  <!-- Header: Opsi B (Abu-abu Baja Industri) -->
+  <!-- Header Sistem -->
   <header class="w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200/95 border-b-4 border-b-blue-600 border-t border-slate-300/80 shadow-md sticky top-0 z-40 mb-6">
     <div class="w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 py-3 md:py-5 flex justify-between items-center">
       <a href="index.html" class="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors text-xs md:text-sm font-bold">
@@ -37,13 +54,14 @@
     </div>
   </header>
 
-  <!-- Konten Utama Absensi Super Luas -->
+  <!-- Konten Utama Absensi -->
   <main class="flex-grow w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 py-4 flex flex-col justify-start items-center">
 
+    <!-- Form Login / Verifikasi Identitas Siswa -->
     <section id="view-login" class="w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl bg-white/95 p-6 md:p-10 rounded-2xl shadow-sm border border-slate-100/80">
       <div class="text-center mb-6 md:mb-8">
         <h2 class="text-lg md:text-2xl font-bold text-slate-800">Verifikasi Identitas Siswa</h2>
-        <p class="text-[11px] md:text-sm text-slate-500 mt-1 md:mt-2">Silakan pilih kelas dan nama Anda untuk memverifikasi status kehadiran hari ini.</p>
+        <p class="text-[11px] md:text-sm text-slate-500 mt-1 md:mt-2">Silakan pilih kelas dan nama untuk memverifikasi status kehadiran hari ini.</p>
       </div>
 
       <form id="form-login" class="space-y-4 md:space-y-6">
@@ -74,7 +92,7 @@
       </form>
     </section>
 
-    <!-- View Absen & Scanner (Grid PC Melebar Sempurna) -->
+    <!-- Halaman Utama Kamera & Deteksi Kamera -->
     <section id="view-absen" class="hidden w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] bg-white/95 p-6 md:p-10 rounded-2xl shadow-sm border border-slate-100/80 space-y-4 md:space-y-6">
       <div class="flex justify-between items-center pb-2 md:pb-4 border-b border-slate-100">
         <div>
@@ -132,6 +150,7 @@
             </button>
           </form>
 
+          <!-- Tampilan Pengiriman Data Berhasil -->
           <div id="success-container" class="hidden text-center p-4 md:p-8 bg-emerald-50 border border-emerald-100 rounded-xl md:rounded-2xl space-y-3 md:space-y-4">
             <div class="w-10 h-10 md:w-16 md:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-lg md:text-3xl">
               <i class="fa-solid fa-check"></i>
@@ -154,6 +173,7 @@
     </section>
   </main>
 
+  <!-- Panel Pemantauan Pembimbing PKL -->
   <section id="view-pembimbing" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-center items-center p-2 sm:p-4">
     <div class="bg-white w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] h-[95vh] rounded-2xl shadow-xl flex flex-col overflow-hidden">
       <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
@@ -166,6 +186,7 @@
         </button>
       </div>
 
+      <!-- Filter Pencarian Panel Pembimbing -->
       <div class="p-4 bg-slate-50/50 border-b border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3">
         <div>
           <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">Filter Kelas</label>
@@ -218,6 +239,7 @@
         </div>
       </div>
 
+      <!-- Area Tabel Laporan -->
       <div class="flex-grow overflow-auto p-4">
         <table class="w-full text-left border-collapse text-xs">
           <thead id="tabel-rekap-head"></thead>
@@ -225,7 +247,7 @@
         </table>
       </div>
 
-      <!-- PENAMBAHAN ID: pembimbing-date-nav (Penting untuk disembunyikan via JS) -->
+      <!-- Kontrol Tanggal Pembimbing -->
       <div id="pembimbing-date-nav" class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs transition-all">
         <span class="text-slate-500 font-bold uppercase tracking-wider text-[9px] flex items-center gap-1.5">
           <i class="fa-solid fa-calendar-day text-blue-600"></i> Filter Kalender Kerja PKL Harian
@@ -244,7 +266,7 @@
     </div>
   </section>
 
-  <!-- MODAL AUTH -->
+  <!-- MODAL AUTHENTICATION -->
   <div id="modal-auth" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex justify-center items-center p-4">
     <div class="bg-white w-full max-w-xs rounded-2xl p-5 shadow-xl border border-slate-100 flex flex-col gap-4 transform transition-all">
       <div class="text-center">
@@ -282,7 +304,7 @@
     </div>
   </div>
 
-  <!-- MODAL KOREKSI -->
+  <!-- MODAL KOREKSI DATA PRESENSI -->
   <div id="modal-correction" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex justify-center items-center p-4">
     <div class="bg-white w-full max-w-sm rounded-2xl p-5 shadow-xl border border-slate-100 flex flex-col gap-4">
       <div class="text-center border-b pb-2">
@@ -334,7 +356,7 @@
     </div>
   </div>
 
-  <!-- Footer: Opsi B (Abu-abu Baja Industri) -->
+  <!-- Footer -->
   <footer class="w-full bg-gradient-to-t from-slate-200 to-slate-100 border-t-2 border-slate-300 py-3.5 md:py-5 mt-8 shadow-inner">
     <div class="w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 flex justify-between items-center">
       <p class="text-[10px] md:text-xs text-slate-600 font-bold tracking-wide">© 2026 DPIB & TKP | SMKN2TB - All Rights Reserved.</p>
