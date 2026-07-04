@@ -1,7 +1,8 @@
-// Nama penyimpanan sementara (Cache). 
-// Kiat: Jika nanti Anda melakukan update besar, ubah 'v2' menjadi 'v3' untuk memperbarui memori HP siswa secara paksa.
+// Nama penyimpanan utama
 const CACHE_NAME = 'absensi-pkl-v2';
 
+// Daftar file aktif yang wajib disimpan untuk akses offline.
+// Jika Anda menambah atau menghapus file dari daftar ini, sistem akan otomatis menyesuaikannya.
 const ASSETS = [
   './',
   './index.html',
@@ -14,7 +15,7 @@ const ASSETS = [
 
 // 1. Tahap instalasi Service Worker
 self.addEventListener('install', (e) => {
-  // Langsung aktifkan Service Worker baru tanpa menunggu aplikasi ditutup (mengatasi delay update)
+  // Langsung aktifkan sistem baru begitu terdeteksi ada perubahan file sw.js di GitHub
   self.skipWaiting();
   
   e.waitUntil(
@@ -24,40 +25,51 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// 2. Tahap aktivasi: Membersihkan memori cache versi lama otomatis
+// 2. Tahap aktivasi: Sistem Pembersih Sampah Otomatis
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    }).then(() => self.clients.claim()) // Langsung kendalikan halaman web begitu aktif
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.keys().then((keys) => {
+        return Promise.all(
+          keys.map((request) => {
+            // Ambil jalur folder/nama file dari alamat memori (misal: /logosmk.png)
+            const urlPath = new URL(request.url).pathname;
+            
+            // Periksa apakah file yang ada di memori HP masih terdaftar di daftar ASSETS kita
+            const isAssetStillNeeded = ASSETS.some(asset => {
+              const normalizedAsset = asset.replace('./', '');
+              return urlPath.endsWith(normalizedAsset) || urlPath === '/' || urlPath.endsWith('/');
+            });
+
+            // JIKA FILE TIDAK ADA DI DAFTAR ASSETS LAGI, HAPUS OTOMATIS DARI HP SISWA
+            if (!isAssetStillNeeded) {
+              return cache.delete(request);
+            }
+          })
+        );
+      });
+    }).then(() => self.clients.claim()) // Langsung kendalikan halaman aktif
   );
 });
 
 // 3. Strategi Network-First (Utamakan Internet, Cadangan di Memori)
 self.addEventListener('fetch', (e) => {
-  // BATASAN: Hanya kelola aset internal web kita (GET request & berasal dari domain yang sama)
-  // Ini mencegah request database Firebase/Firestore agar tidak terganggu dan bebas dari error ERR_FAILED
+  // Hanya kelola berkas internal aplikasi kita sendiri untuk mencegah error pada Firebase (database)
   if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) {
-    return; // Biarkan request database langsung meluncur ke internet tanpa diinterupsi oleh PWA
+    return; // Biarkan request database/eksternal langsung ke internet tanpa interupsi
   }
 
   e.respondWith(
     fetch(e.request)
       .then((networkResponse) => {
-        // Jika internet aktif, simpan salinan terbaru ke memori untuk persiapan offline, lalu tampilkan
+        // Jika internet aktif, langsung timpa data lama di memori dengan yang paling baru
         return caches.open(CACHE_NAME).then((cache) => {
           cache.put(e.request, networkResponse.clone());
           return networkResponse;
         });
       })
       .catch(() => {
-        // Jika internet mati (offline), ambil cadangan halaman yang tersimpan di memori lokal
+        // Jika internet terputus/offline, ambil data cadangan dari memori HP
         return caches.match(e.request);
       })
   );
