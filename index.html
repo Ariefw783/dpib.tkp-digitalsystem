@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Digital Siswa DPIB & TKP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+  <div id="system-loader" class="fixed inset-0 bg-slate-50 z-[100] flex flex-col justify-center items-center transition-all duration-500">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-xs font-bold text-slate-600 tracking-wider uppercase animate-pulse">Menghubungkan ke Sistem...</p>
+    </div>
+  </div>
+
+  <div class="background-overlay absolute inset-0 -z-10"></div>
+
+  <!-- Header: Opsi B (Abu-abu Baja Industri) -->
+  <header class="w-full bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200/95 border-b-4 border-b-blue-600 border-t border-slate-300/80 shadow-md sticky top-0 z-40">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 sm:px-8 py-3 md:py-5 flex justify-between items-center">
+      <div class="flex items-center gap-3 md:gap-5">
+        <img src="logosmk.png" alt="Logo SMK" class="h-10 w-10 md:h-14 md:w-14 object-contain" onerror="this.src='https://placehold.co/100x100?text=SMK'">
+        <div>
+          <h1 class="text-xs sm:text-sm md:text-xl font-black tracking-wide text-slate-800 uppercase">DIGITAL DASHBOARD</h1>
+          <p class="text-[10px] sm:text-xs md:text-sm text-slate-600 font-bold">DPIB - TKP | SMKN2 TB</p>
+        </div>
+      </div>
+      <div class="text-right hidden sm:block">
+        <p id="current-date" class="text-xs md:text-sm font-bold text-slate-700">Memuat tanggal...</p>
+        <p id="current-time" class="text-[10px] md:text-xs text-blue-600 font-mono font-bold">00:00:00 WIB</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Konten Utama Super Luas (Setiap Kartu Memiliki Kode Warna Mandiri) -->
+  <main class="flex-grow w-full max-w-[96vw] xl:max-w-[92vw] 2xl:max-w-[88vw] mx-auto px-4 py-6 md:py-10 flex flex-col justify-start items-center">
+    
+    <section class="text-center mb-6 md:mb-10 max-w-lg md:max-w-2xl">
+      <span class="px-3 py-1 md:px-4 md:py-1.5 bg-blue-200 text-blue-800 rounded-full text-[12px] md:text-sm font-bold tracking-wider uppercase">Portal Siswa</span>
+      <h2 class="text-xl md:text-3xl font-bold text-slate-800 mt-2.5 md:mt-4 leading-tight">Selamat Datang</h2>
+      <p class="text-xs md:text-base text-slate-600 mt-1.5 md:mt-3">Akses layanan dan administrasi akademik kompetensi keahlian DPIB & TKP.</p>
+    </section>
+
+    <!-- Kartu Menu Diperlebar Maksimal -->
+    <section class="space-y-4 md:space-y-6 w-full max-w-lg md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
+      
+      <!-- Kartu Utama: Absensi PKL (Memanggil kelas card-pkl) -->
+      <a href="absensipkl.html" class="card-interactive card-pkl group flex items-center justify-between p-4 sm:p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:border-blue-500 hover:bg-white transition-all duration-300">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <!-- Kotak Ikon -->
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-blue-50/80 border border-blue-100/50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+            <i class="fa-solid fa-circle-user text-xl sm:text-2xl"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="text-xs sm:text-base font-bold text-slate-800 tracking-wide uppercase">Absensi PKL</h3>
+              <span class="text-[8px] sm:text-[9px] bg-red-50 text-red-600 font-bold px-2 py-0.5 rounded-full border border-red-200 uppercase tracking-wider">Khusus Kelas XII</span>
+            </div>
+            <p class="text-[9px] sm:text-xs text-slate-500 font-medium mt-1">Angkatan 2026/2027 • Akses presensi harian & jurnal kegiatan</p>
+          </div>
+        </div>
+        <!-- Anak Panah Interaktif -->
+        <div class="text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 pr-2">
+          <i class="fa-solid fa-arrow-right text-sm sm:text-base"></i>
+        </div>
+      </a>
+
+      <!-- Kartu Pendukung 1: Under Construction (Memanggil kelas card-pending-1) -->
+      <div class="blueprint-draft card-pending-1 relative overflow-hidden flex items-center justify-between p-4 sm:p-6 rounded-2xl border-2 border-dashed border-slate-300/80 opacity-80">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <!-- Kotak Ikon -->
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-slate-100/80 border border-slate-200 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-gear fa-2xl fa-width-auto"></i>
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">Under Construction</h3>
+            <p class="text-[9px] sm:text-xs text-slate-400 font-medium mt-0.5">Cooming Soon</p>
+          </div>
+        </div>
+        <!-- Ikon Gembok Tipis -->
+        <div class="text-slate-300 pr-2">
+          <i class="fa-solid fa-lock fa-xl" style="color: rgba(0, 0, 0, 0.219);"></i>
+        </div>
+      </div>
+
+      <!-- Kartu Pendukung 2: Under Construction (Memanggil kelas card-pending-2) -->
+      <div class="blueprint-draft card-pending-2 relative overflow-hidden flex items-center justify-between p-4 sm:p-6 rounded-2xl border-2 border-dashed border-slate-300/80 opacity-80">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <!-- Kotak Ikon -->
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-slate-100/80 border border-slate-200 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-gear fa-2xl fa-width-auto"></i>
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">Under Construction</h3>
+            <p class="text-[9px] sm:text-xs text-slate-400 font-medium mt-0.5">Cooming Soon</p>
+          </div>
+        </div>
+        <!-- Ikon Gembok Tipis -->
+        <div class="text-slate-300 pr-2">
+          <i class="fa-solid fa-lock fa-xl" style="color: rgba(0, 0, 0, 0.219);"></i>
+        </div>
+      </div>
+
+      <!-- Kartu Pendukung 3: Under Construction (Memanggil kelas card-pending-3) -->
+      <div class="blueprint-draft card-pending-3 relative overflow-hidden flex items-center justify-between p-4 sm:p-6 rounded-2xl border-2 border-dashed border-slate-300/80 opacity-80">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <!-- Kotak Ikon -->
+          <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-slate-100/80 border border-slate-200 flex items-center justify-center text-slate-400">
+            <i class="fa-solid fa-gear fa-2xl fa-width-auto"></i>
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">Under Construction</h3>
+            <p class="text-[9px] sm:text-xs text-slate-400 font-medium mt-0.5">Cooming Soon</p>
+          </div>
+        </div>
+        <!-- Ikon Gembok Tipis -->
+        <div class="text-slate-300 pr-2">
+          <i class="fa-solid fa-lock fa-xl" style="color: rgba(0, 0, 0, 0.219);"></i>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer: Opsi B (Abu-abu Baja Industri) -->
+  <footer class="w-full bg-gradient-to-t from-slate-200 to-slate-100 border-t-2 border-slate-300 py-4 mt-12 shadow-inner">
+    <div class="w-full max-w-[96vw] xl:max-w-[92vw] mx-auto px-4 text-center">
+      <p class="text-[9px] sm:text-xs text-slate-600 font-bold tracking-wide">
+        © 2026 Jurusan DPIB & TKP <span class="text-slate-400 mx-1">|</span> SMKN 2 Terbanggi Besar. Semua Hak Cipta Dilindungi.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function runClock() {
+      const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+      const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      const d = new Date();
+      document.getElementById("current-date").textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      document.getElementById("current-time").textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')} WIB`;
+    }
+    setInterval(runClock, 1000); runClock();
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("system-loader");
+      if (loader) { loader.classList.add("opacity-0", "pointer-events-none"); setTimeout(() => loader.remove(), 500); }
+    });
+  </script>
+</body>
+</html>

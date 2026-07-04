@@ -1,0 +1,157 @@
+/* ========================================================== */
+/* CUSTOM STYLES FOR PORTAL & ABSENSI SYSTEM */
+/* ========================================================== */
+
+/* KODE BARU: Desain Latar Belakang Tanda Air (Watermark) */
+/* Desain Latar Belakang Semula dengan Watermark Logo */
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  
+  /* Latar belakang biru muda semula */
+  background-color: rgba(224, 242, 254, 0.75); 
+  
+  /* Penggabungan: Kisi Grid Semula + Filter Penutup + Logo Sekolah di Bawah */
+  background-image: 
+    linear-gradient(rgba(148, 163, 184, 0.12) 1.5px, transparent 1.2px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.12) 1.5px, transparent 1.2px),
+    linear-gradient(rgba(148, 163, 184, 0.1) 1.2px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1.2px, transparent 1px),
+    /* Lapisan warna biru muda semula untuk meredupkan logo di bawahnya */
+    linear-gradient(rgba(224, 242, 254, 0.94), rgba(224, 242, 254, 0.94)),
+    url('logosmk.png');
+  
+  /* Pengaturan posisi masing-masing lapisan gambar latar belakang */
+  background-position: 
+    0 0, 0 0, 0 0, 0 0, 
+    center, center;
+  background-repeat: 
+    repeat, repeat, repeat, repeat, 
+    no-repeat, no-repeat;
+  background-size: 
+    100px 100px, 100px 100px, 20px 20px, 20px 20px, 
+    auto, auto 35vh;
+  
+  z-index: -10;
+}
+
+/* 2. Animasi Pemindai Laser Kamera (Futuristik) */
+@keyframes laserScan {
+  0% {
+    top: 0%;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+  100% {
+    top: 100%;
+    opacity: 0.3;
+  }
+}
+
+.scanner-laser {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.8), 0 0 20px rgba(96, 165, 250, 0.5);
+  animation: laserScan 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* 3. Kustom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.8);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* 4. Sentuhan Interaktif Tombol */
+.btn-status-active {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.btn-status-inactive {
+  background-color: #ffffff;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.btn-status-inactive:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* ========================================================== */
+/* TAMBAHAN GAYA BARU UNTUK UI/UX YANG LEBIH ELEGAN */
+/* ========================================================== */
+
+/* Efek Angkat Ringan & Bayangan Halus untuk Kartu */
+.card-interactive {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.08), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+}
+
+/* Pola Garis Sketsa untuk Kartu Under Construction (Sudah Dibuat Transparan) */
+.blueprint-draft {
+  background-image: radial-gradient(#cbd5e1 0.75px, transparent 0.75px), radial-gradient(#cbd5e1 0.75px, transparent 0.75px);
+  background-size: 8px 8px;
+  background-position: 0 0, 5px 5px;
+}
+
+/* ========================================================== */
+/* PENGATURAN WARNA KARTU SECARA MANDIRI (INDIPENDEN) */
+/* ========================================================== */
+
+/* 1. Pengaturan Kartu Utama: Absensi PKL */
+.card-pkl {
+  background-color: rgba(140, 209, 255, 0.295) !important; /* Putih semi-transparan */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 2. Pengaturan Kartu Pendukung 1 (Under Construction Pertama) */
+.card-pending-1 {
+  background-color: rgba(145, 255, 0, 0) !important; /* Abu-abu semen transparan */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 3. Pengaturan Kartu Pendukung 2 (Under Construction Kedua) */
+.card-pending-2 {
+  background-color: rgba(145, 255, 0, 0) !important; /* Abu-abu semen transparan */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 4. Pengaturan Kartu Pendukung 3 (Under Construction Ketiga) */
+.card-pending-3 {
+  background-color: rgba(145, 255, 0, 0) !important; /* Abu-abu semen transparan */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
