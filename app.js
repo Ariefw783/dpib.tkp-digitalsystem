@@ -1260,10 +1260,16 @@ document.getElementById("btn-export-rekap").addEventListener("click", () => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Laporan Rekapitulasi PKL - Kelas ${filterKelas}</title>
+      
+      <!-- 1. Pustaka Desain Tailwind CSS -->
       <script src="https://cdn.tailwindcss.com"></script>
+      
+      <!-- 2. BARIS PERBAIKAN: Menambahkan Pustaka Gambar Ikon FontAwesome agar Simbol Muncul Saat Dicetak -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      
       <style>
         @media print {
-          body, div, table, tr, td, th, h1, h2, h3, p, span {
+          body, div, table, tr, td, th, h1, h2, h3, p, span, i {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -1302,7 +1308,7 @@ document.getElementById("btn-export-rekap").addEventListener("click", () => {
         <!-- Tanda Tangan Pembimbing -->
         <div class="flex justify-end pt-12">
           <div class="text-center w-48 space-y-16">
-            <p class="text-xs font-semibold text-slate-700">Pembimbing PKL,</p>
+            <p class="text-xs font-semibold text-slate-700">Pembimbing PKL</p>
             <div class="border-b border-slate-400 w-full"></div>
             <p class="text-[10px] font-bold text-slate-500 uppercase">NIP. .............................</p>
           </div>
